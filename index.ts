@@ -46,9 +46,13 @@ stat(ENVELOPE_PATH, (err, stats) => {
   }
 });
 
+const ORIGIN = process.env.ORIGIN as string;
+if (!ORIGIN) {
+  throw new Error('ORIGIN is undefined');
+}
 function response(body: BodyInit, init?: ResponseInit) {
   const res = new Response(body, init);
-  res.headers.set('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.headers.set('Access-Control-Allow-Origin', ORIGIN);
   return res;
 }
 
