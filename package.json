@@ -2,7 +2,7 @@
   "name": "sw-server",
   "module": "index.ts",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "start": "bun run index.ts",
     "lint": "gts lint",
@@ -20,6 +20,6 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "sonic-weave": "^0.1.1"
+    "sonic-weave": "^0.2.0"
   }
 }
