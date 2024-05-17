@@ -1,5 +1,6 @@
 import {stat} from 'node:fs';
 import {join, parse} from 'node:path';
+import {cleanAndValidateEnvelope, validatePayload} from './data-processing';
 
 const INDEX_BODY = `
 <!DOCTYPE html>
@@ -32,6 +33,19 @@ stat(SCALE_PATH, (err, stats) => {
   }
 });
 
+const ENVELOPE_PATH = process.env.ENVELOPE_PATH;
+if (ENVELOPE_PATH === undefined) {
+  throw new Error('ENVELOPE_PATH is undefined');
+}
+stat(ENVELOPE_PATH, (err, stats) => {
+  if (err) {
+    throw err;
+  }
+  if (!stats.isDirectory()) {
+    throw new Error('ENVELOPE_PATH must be a directory');
+  }
+});
+
 function response(body: BodyInit, init?: ResponseInit) {
   const res = new Response(body, init);
   res.headers.set('Access-Control-Allow-Origin', 'http://localhost:5173');
@@ -41,6 +55,8 @@ function response(body: BodyInit, init?: ResponseInit) {
 const server = Bun.serve({
   async fetch(req) {
     const path = new URL(req.url).pathname;
+    console.log(req.method, path);
+    const requestIP = server.requestIP(req);
 
     // Respond with text/html in development. Should not be accessible in production.
     if (path === '/') {
@@ -55,14 +71,23 @@ const server = Bun.serve({
         return response('Method not allowed', {status: 405});
       }
       const data = await req.json();
-      // TODO: Validate data
+      const envelope = cleanAndValidateEnvelope(data.envelope);
+      envelope.requestIP = requestIP;
+      const envelopeFilename = join(ENVELOPE_PATH, data.id + '.envelope.json');
+      const envelopeFile = Bun.file(envelopeFilename);
+      if (await envelopeFile.exists()) {
+        return response('Scale already exists', {status: 409});
+      }
+      await Bun.write(envelopeFile, JSON.stringify(envelope));
+
+      const payload = validatePayload(data.payload);
       // TODO: Generate preview image
       const filename = join(SCALE_PATH, data.id + '.json');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
-      await Bun.write(file, JSON.stringify(data.payload));
+      await Bun.write(file, JSON.stringify(payload));
 
       return response('Scale created', {status: 201});
     }
@@ -70,7 +95,7 @@ const server = Bun.serve({
     // Read a stored scale. This should be bypassed in production.
     if (path.startsWith('/scale/')) {
       const {dir, base, ext} = parse(path);
-      if (dir !== '/scale') {
+      if (dir !== '/scale' || base.includes('..')) {
         return response('Bad scale path', {status: 400});
       }
       if (base.length > 255) {
@@ -81,6 +106,8 @@ const server = Bun.serve({
       }
       const filename = join(SCALE_PATH, base);
       const file = Bun.file(filename);
+
+      // 404 done in error handler
       return response(file);
     }
 
@@ -91,6 +118,13 @@ const server = Bun.serve({
 
     // 404s
     return response('Page not found', {status: 404});
+  },
+  error(error) {
+    if (error.errno === -2 && error.syscall === 'open') {
+      return response('Not found', {status: 404});
+    }
+    console.error(error);
+    return response('Internal server error', {status: 500});
   },
 });
 
