@@ -21,9 +21,10 @@ function validateNumber(n: number) {
 }
 
 export function validatePayload(data: any) {
-  const scale = data.scale;
+  // == Scale ==
+  const scale = data.scale.scale;
   if (scale.type !== 'ScaleWorkshopScale') {
-    return null;
+    throw new Error('Invalid scale data');
   }
   for (const ratio of scale.intervalRatios) {
     validateNumber(ratio);
@@ -31,9 +32,13 @@ export function validatePayload(data: any) {
   validateNumber(scale.baseFrequency);
   validateNumber(scale.baseMidiNote);
   validateString(scale.title, 4095);
-  Interval.reviver('relativeIntervals', data.relativeIntervals);
-  validateString(data.name, 4095);
-  validateString(data.sourceText, 65535);
+  Interval.reviver('relativeIntervals', data.scale.relativeIntervals);
+  validateString(data.scale.name, 4095);
+  validateString(data.scale.sourceText, 65535);
+  // TODO: Rest
+
+  // == Audio ==
+  validateString(data.audio.waveform);
   // TODO: Rest
   return data;
 }
