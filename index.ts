@@ -61,6 +61,9 @@ const server = Bun.serve({
     const path = new URL(req.url).pathname;
     console.log(req.method, path);
     const requestIP = server.requestIP(req);
+    const xRealIP = req.headers.get('X-Real-IP');
+    const xForwardedFor = req.headers.get('X-Forwarded-For');
+    const xForwardedProto = req.headers.get('X-Forwarded-Proto');
 
     // Respond with text/html in development. Should not be accessible in production.
     if (path === '/') {
@@ -77,6 +80,10 @@ const server = Bun.serve({
       const data = await req.json();
       const envelope = cleanAndValidateEnvelope(data.envelope);
       envelope.requestIP = requestIP;
+      envelope.xRealIP = xRealIP;
+      envelope.xForwardedFor = xForwardedFor;
+      envelope.xForwardedProto = xForwardedProto;
+
       const envelopeFilename = join(ENVELOPE_PATH, data.id + '.envelope.json');
       const envelopeFile = Bun.file(envelopeFilename);
       if (await envelopeFile.exists()) {
