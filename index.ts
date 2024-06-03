@@ -26,6 +26,7 @@ if (SCALE_PATH === undefined) {
 }
 stat(SCALE_PATH, (err, stats) => {
   if (err) {
+    console.warn('SCALE_PATH stat failed');
     throw err;
   }
   if (!stats.isDirectory()) {
@@ -39,6 +40,7 @@ if (ENVELOPE_PATH === undefined) {
 }
 stat(ENVELOPE_PATH, (err, stats) => {
   if (err) {
+    console.warn('ENVELOPE_PATH stat failed');
     throw err;
   }
   if (!stats.isDirectory()) {
@@ -93,12 +95,13 @@ const server = Bun.serve({
 
       const payload = validatePayload(data.payload);
       // TODO: Generate preview image
-      const filename = join(SCALE_PATH, data.id + '.json');
+      const filename = join(SCALE_PATH, data.id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
-      await Bun.write(file, JSON.stringify(payload));
+      const buffer = Buffer.from(JSON.stringify(payload));
+      await Bun.write(file, Bun.gzipSync(buffer));
 
       return response('Scale created', {status: 201});
     }
@@ -112,14 +115,23 @@ const server = Bun.serve({
       if (base.length > 255) {
         return response('Scale id too long', {status: 414});
       }
-      if (ext !== '.json') {
+      if (ext !== '.gz') {
         return response('Not found', {status: 404});
       }
       const filename = join(SCALE_PATH, base);
       const file = Bun.file(filename);
 
+      const accept = req.headers.get('Accept-Encoding');
+      if (!accept || !accept.split(',').includes('gzip')) {
+        const buffer = await file.arrayBuffer();
+        return response(Bun.gunzipSync(buffer));
+      }
+
       // 404 done in error handler
-      return response(file);
+      const res = response(file);
+
+      res.headers.set('Content-Encoding', 'gzip');
+      return res;
     }
 
     // We don't brew coffee here.
