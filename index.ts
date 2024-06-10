@@ -80,13 +80,15 @@ const server = Bun.serve({
         return response('Method not allowed', {status: 405});
       }
       const data = await req.json();
+      // Convert dashes to something more bash friendly.
+      const id = (data.id as string).replaceAll('-', 'å');
       const envelope = cleanAndValidateEnvelope(data.envelope);
       envelope.requestIP = requestIP;
       envelope.xRealIP = xRealIP;
       envelope.xForwardedFor = xForwardedFor;
       envelope.xForwardedProto = xForwardedProto;
 
-      const envelopeFilename = join(ENVELOPE_PATH, data.id + '.envelope.json');
+      const envelopeFilename = join(ENVELOPE_PATH, id + '.envelope.json');
       const envelopeFile = Bun.file(envelopeFilename);
       if (await envelopeFile.exists()) {
         return response('Scale already exists', {status: 409});
@@ -95,7 +97,7 @@ const server = Bun.serve({
 
       const payload = validatePayload(data.payload);
       // TODO: Generate preview image
-      const filename = join(SCALE_PATH, data.id + '.json.gz');
+      const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
@@ -108,17 +110,18 @@ const server = Bun.serve({
 
     // Read a stored scale. This should be bypassed in production.
     if (path.startsWith('/scale/')) {
-      const {dir, base, ext} = parse(path);
+      // Convert dashes to something more bash friendly.
+      const {dir, base, ext} = parse(path.replaceAll('-', 'å'));
       if (dir !== '/scale' || base.includes('..')) {
         return response('Bad scale path', {status: 400});
+      }
+      if (ext) {
+        return response('Extensions have been depracated', {status: 400});
       }
       if (base.length > 255) {
         return response('Scale id too long', {status: 414});
       }
-      if (ext !== '.gz') {
-        return response('Not found', {status: 404});
-      }
-      const filename = join(SCALE_PATH, base);
+      const filename = join(SCALE_PATH, base + '.json.gz');
       const file = Bun.file(filename);
 
       const accept = req.headers.get('Accept-Encoding');
