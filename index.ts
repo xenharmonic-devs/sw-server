@@ -48,6 +48,20 @@ stat(ENVELOPE_PATH, (err, stats) => {
   }
 });
 
+const STATISTICS_PATH = process.env.STATISTICS_PATH;
+if (STATISTICS_PATH === undefined) {
+  throw new Error('STATISTICS_PATH is undefined');
+}
+stat(STATISTICS_PATH, (err, stats) => {
+  if (err) {
+    console.warn('STATISTICS_PATH stat failed');
+    throw err;
+  }
+  if (!stats.isDirectory()) {
+    throw new Error('STATISTICS_PATH must be a directory');
+  }
+});
+
 const ORIGIN = process.env.ORIGIN as string;
 if (!ORIGIN) {
   throw new Error('ORIGIN is undefined');
@@ -56,6 +70,36 @@ function response(body: BodyInit, init?: ResponseInit) {
   const res = new Response(body, init);
   res.headers.set('Access-Control-Allow-Origin', ORIGIN);
   return res;
+}
+
+const monthFormatter = new Intl.DateTimeFormat('en-US', {month: '2-digit'});
+function statisticsFilename() {
+  const date = new Date();
+  const month = monthFormatter.format(date);
+  return join(STATISTICS_PATH!, `stats_${date.getFullYear()}_${month}.json`);
+}
+function emptyStatistic() {
+  return {
+    error: 0,
+    'scale GET': 0,
+    'scale POST': 0,
+    'scale GET by id': {} as Record<string, number>,
+  };
+}
+let statistics = emptyStatistic();
+let statstisticsFile = Bun.file(statisticsFilename());
+if (await statstisticsFile.exists()) {
+  console.log("Loading this month's statistics");
+  statistics = await statstisticsFile.json();
+}
+
+async function checkStatistics() {
+  if (statstisticsFile.name !== statisticsFilename()) {
+    console.log("Committing last month's statistics");
+    await Bun.write(statstisticsFile, JSON.stringify(statistics));
+    statistics = emptyStatistic();
+    statstisticsFile = Bun.file(statisticsFilename());
+  }
 }
 
 const server = Bun.serve({
@@ -74,11 +118,22 @@ const server = Bun.serve({
       return res;
     }
 
+    if (path === '/kill') {
+      console.warn('Kill request received');
+      await Bun.write(statstisticsFile, JSON.stringify(statistics));
+      server.stop();
+      const res = response('killed\n');
+      res.headers.append('Content-Type', 'text/plain');
+      return res;
+    }
+
     // Simple file-based system for storing scales.
     if (path === '/scale') {
       if (req.method !== 'POST') {
         return response('Method not allowed', {status: 405});
       }
+      await checkStatistics();
+      statistics['scale POST']++;
       const data = await req.json();
       // Convert dashes to something more bash friendly.
       const id = (data.id as string).replaceAll('-', 'å');
@@ -110,6 +165,10 @@ const server = Bun.serve({
 
     // Read a stored scale. This should be bypassed in production.
     if (path.startsWith('/scale/')) {
+      // Total stats include bad requests
+      await checkStatistics();
+      statistics['scale GET']++;
+
       // Convert dashes to something more bash friendly.
       const {dir, base, ext} = parse(path.replaceAll('-', 'å'));
       if (dir !== '/scale' || base.includes('..')) {
@@ -123,6 +182,9 @@ const server = Bun.serve({
       }
       const filename = join(SCALE_PATH, base + '.json.gz');
       const file = Bun.file(filename);
+
+      const count = statistics['scale GET by id'][base] ?? 0;
+      statistics['scale GET by id'][base] = count + 1;
 
       const accept = req.headers.get('Accept-Encoding');
       if (!accept || !accept.split(',').includes('gzip')) {
@@ -146,6 +208,7 @@ const server = Bun.serve({
     return response('Page not found', {status: 404});
   },
   error(error) {
+    statistics.error++;
     if (error.errno === -2 && error.syscall === 'open') {
       return response('Not found', {status: 404});
     }
