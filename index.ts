@@ -163,7 +163,7 @@ const server = Bun.serve({
       return response('Scale created', {status: 201});
     }
 
-    // Read a stored scale. This should be bypassed in production.
+    // Read a stored scale.
     if (path.startsWith('/scale/')) {
       // Total stats include bad requests
       await checkStatistics();
