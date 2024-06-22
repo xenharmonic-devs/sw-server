@@ -104,8 +104,9 @@ async function checkStatistics() {
 
 const server = Bun.serve({
   async fetch(req) {
-    const path = new URL(req.url).pathname;
-    console.log(req.method, path);
+    const url = new URL(req.url);
+    const path = url.pathname;
+    console.log(req.method, req.url);
     const requestIP = server.requestIP(req);
     const xRealIP = req.headers.get('X-Real-IP');
     const xForwardedFor = req.headers.get('X-Forwarded-For');
@@ -187,7 +188,11 @@ const server = Bun.serve({
       statistics['scale GET by id'][base] = count + 1;
 
       const accept = req.headers.get('Accept-Encoding');
-      if (!accept || !accept.split(',').includes('gzip')) {
+      if (
+        url.searchParams.get('gzip') === '0' ||
+        !accept ||
+        !accept.split(',').includes('gzip')
+      ) {
         const buffer = await file.arrayBuffer();
         return response(Bun.gunzipSync(buffer));
       }
