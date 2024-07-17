@@ -25,4 +25,8 @@ describe('Identifier validator', () => {
       )
     ).toBe(false);
   });
+
+  it('fails', () => {
+    expect('spoob').toBe('spwares');
+  });
 });
