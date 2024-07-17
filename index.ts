@@ -1,6 +1,7 @@
 import {stat} from 'node:fs';
 import {join, parse} from 'node:path';
 import {cleanAndValidateEnvelope, validatePayload} from './data-processing';
+import {validateId} from './utils';
 
 const INDEX_BODY = `
 <!DOCTYPE html>
@@ -136,6 +137,9 @@ const server = Bun.serve({
       await checkStatistics();
       statistics['scale POST']++;
       const data = await req.json();
+      if (!validateId(data.id)) {
+        return response('Bad identifier', {status: 400});
+      }
       // Convert dashes to something more bash friendly.
       const id = (data.id as string).replaceAll('-', 'å');
       const envelope = cleanAndValidateEnvelope(data.envelope);
@@ -170,22 +174,23 @@ const server = Bun.serve({
       await checkStatistics();
       statistics['scale GET']++;
 
-      // Convert dashes to something more bash friendly.
-      const {dir, base, ext} = parse(path.replaceAll('-', 'å'));
+      const {dir, base, ext} = parse(path);
       if (dir !== '/scale' || base.includes('..')) {
         return response('Bad scale path', {status: 400});
       }
       if (ext) {
         return response('Extensions have been depracated', {status: 400});
       }
-      if (base.length > 255) {
-        return response('Scale id too long', {status: 414});
+      if (!validateId(base)) {
+        return response('Bad identifier', {status: 400});
       }
-      const filename = join(SCALE_PATH, base + '.json.gz');
+      // Convert dashes to something more bash friendly.
+      const id = base.replaceAll('-', 'å');
+      const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
 
-      const count = statistics['scale GET by id'][base] ?? 0;
-      statistics['scale GET by id'][base] = count + 1;
+      const count = statistics['scale GET by id'][id] ?? 0;
+      statistics['scale GET by id'][id] = count + 1;
 
       const accept = req.headers.get('Accept-Encoding');
       if (
