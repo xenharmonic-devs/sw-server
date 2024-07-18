@@ -22,23 +22,52 @@ function validateNumber(n: number) {
 
 export function validatePayload(data: any) {
   // == Scale ==
-  const scale = data.scale.scale;
+  const scaleStore = data.scale;
+  const scale = scaleStore.scale;
   if (scale.type !== 'ScaleWorkshopScale') {
     throw new Error('Invalid scale data');
   }
   for (const ratio of scale.intervalRatios) {
     validateNumber(ratio);
   }
+  for (const color of scaleStore.colors) {
+    validateString(color);
+  }
+  for (const label of scaleStore.labels) {
+    validateString(label);
+  }
   validateNumber(scale.baseFrequency);
   validateNumber(scale.baseMidiNote);
   validateString(scale.title, 4095);
   Interval.reviver('relativeIntervals', data.scale.relativeIntervals);
-  validateString(data.scale.name, 4095);
-  validateString(data.scale.sourceText, 65535);
+  validateString(scaleStore.name, 4095);
+  validateString(scaleStore.sourceText, 65535);
+  validateString(scaleStore.error);
+  validateString(scaleStore.warning);
+  validateString(scaleStore.keyboardMode);
   // TODO: Rest
 
   // == Audio ==
-  validateString(data.audio.waveform);
+  const audio = data.audio;
+  validateNumber(audio.mainVolume);
+  if (audio.mainVolume < 0 || audio.mainVolume > 1) {
+    throw new Error('Invalid main volume');
+  }
+  validateNumber(audio.sustainLevel);
+  if (audio.sustainLevel < 0 || audio.sustainLevel > 1) {
+    throw new Error('Invalid sustain level');
+  }
+  validateNumber(audio.pingPongGain);
+  if (audio.pingPongGain < 0 || audio.pingPongGain > 1) {
+    throw new Error('Invalid ping pong gain');
+  }
+  validateNumber(audio.pingPongFeedback);
+  const fb = Math.abs(audio.pingPongFeedback);
+  if (fb > 1) {
+    throw new Error('Invalid ping pong feedback');
+  }
+  validateString(audio.waveform);
+  validateString(audio.aperiodicWaveform);
   // TODO: Rest
   return data;
 }
