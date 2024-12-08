@@ -2,7 +2,7 @@
   "name": "sw-server",
   "module": "index.ts",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "start": "bun run index.ts",
     "lint": "gts lint",
