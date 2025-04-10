@@ -162,8 +162,7 @@ const server = Bun.serve({
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
-      const buffer = Buffer.from(JSON.stringify(payload));
-      await Bun.write(file, Bun.gzipSync(buffer));
+      await Bun.write(file, Bun.gzipSync(JSON.stringify(payload)));
 
       return response('Scale created', {status: 201});
     }

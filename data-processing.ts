@@ -1,4 +1,4 @@
-import {Interval, evaluateExpression} from 'sonic-weave';
+import {Interval, RootContext, evaluateExpression} from 'sonic-weave';
 import {version} from './package.json';
 
 const serverSonicWeaveVersion = evaluateExpression('VERSION', false) as string;
@@ -23,23 +23,30 @@ function validateNumber(n: number) {
 export function validatePayload(data: any) {
   // == Scale ==
   const scaleStore = data.scale;
-  const scale = scaleStore.scale;
-  if (scale.type !== 'ScaleWorkshopScale') {
-    throw new Error('Invalid scale data');
+  if (scaleStore.version) {
+    // New version that supports extended labels.
+    RootContext.reviver('context', data.scale.context);
+    Interval.reviver('intervals', data.scale.intervals);
+  } else {
+    // Old version that ships a pre-calculated Scale instance.
+    const scale = scaleStore.scale;
+    if (scale.type !== 'ScaleWorkshopScale') {
+      throw new Error('Invalid scale data');
+    }
+    validateNumber(scale.baseFrequency);
+    validateNumber(scale.baseMidiNote);
+    validateString(scale.title, 4095);
+    for (const ratio of scale.intervalRatios) {
+      validateNumber(ratio);
+    }
+    for (const color of scaleStore.colors) {
+      validateString(color);
+    }
+    for (const label of scaleStore.labels) {
+      validateString(label);
+    }
+    Interval.reviver('relativeIntervals', data.scale.relativeIntervals);
   }
-  for (const ratio of scale.intervalRatios) {
-    validateNumber(ratio);
-  }
-  for (const color of scaleStore.colors) {
-    validateString(color);
-  }
-  for (const label of scaleStore.labels) {
-    validateString(label);
-  }
-  validateNumber(scale.baseFrequency);
-  validateNumber(scale.baseMidiNote);
-  validateString(scale.title, 4095);
-  Interval.reviver('relativeIntervals', data.scale.relativeIntervals);
   validateString(scaleStore.name, 4095);
   validateString(scaleStore.sourceText, 65535);
   validateString(scaleStore.error);

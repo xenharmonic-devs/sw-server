@@ -1,0 +1,650 @@
+{
+    "id": "TtiIBTLJ7",
+    "payload":
+    {
+        "scale":
+        {
+            "scale":
+            {
+                "type": "ScaleWorkshopScale",
+                "intervalRatios":
+                [
+                    1.1249999999999998,
+                    1.2458496093749991,
+                    1.4983070768766815,
+                    1.7320508075688772,
+                    1.8461538461538458,
+                    2
+                ],
+                "baseFrequency": 332.99999999999983,
+                "baseMidiNote": 62,
+                "title": "Test scale"
+            },
+            "relativeIntervals":
+            [
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            -3,
+                            1,
+                            2,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 0,
+                    "s": 0,
+                    "l": "",
+                    "c": "white",
+                    "n":
+                    {
+                        "type": "f",
+                        "n": "9",
+                        "d": "8"
+                    },
+                    "t":
+                    []
+                },
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            -12,
+                            1,
+                            6,
+                            1,
+                            0,
+                            1,
+                            1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 1,
+                    "s": 0,
+                    "l": "",
+                    "t":
+                    []
+                },
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            7,
+                            12
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 1,
+                    "s": 0,
+                    "l": "fif",
+                    "n":
+                    {
+                        "type": "c",
+                        "s": "",
+                        "w": "700",
+                        "f": "",
+                        "e": null,
+                        "r": false
+                    },
+                    "t":
+                    []
+                },
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            0,
+                            1,
+                            1,
+                            2,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 0,
+                    "s": 0,
+                    "l": "",
+                    "c": "#f3a",
+                    "t":
+                    []
+                },
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            3,
+                            1,
+                            1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            -1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 1,
+                    "s": 0,
+                    "l": "",
+                    "n":
+                    {
+                        "ups": 0,
+                        "lifts": 0,
+                        "type": "FJS",
+                        "pythagorean":
+                        {
+                            "type": "Pythagorean",
+                            "quality":
+                            {
+                                "fraction": "",
+                                "quality": "n"
+                            },
+                            "degree":
+                            {
+                                "negative": false,
+                                "base": 7,
+                                "octaves": 0,
+                                "imperfect": true
+                            }
+                        },
+                        "superscripts":
+                        [],
+                        "subscripts":
+                        [
+                            [
+                                13,
+                                "n"
+                            ]
+                        ]
+                    },
+                    "t":
+                    []
+                },
+                {
+                    "type": "Interval",
+                    "v":
+                    {
+                        "type": "TimeMonzo",
+                        "t":
+                        {
+                            "n": 0,
+                            "d": 1
+                        },
+                        "p":
+                        [
+                            1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1
+                        ],
+                        "r":
+                        {
+                            "n": 1,
+                            "d": 1
+                        }
+                    },
+                    "d": 1,
+                    "s": 0,
+                    "l": "",
+                    "t":
+                    []
+                }
+            ],
+            "colors":
+            [
+                "white",
+                "silver",
+                "silver",
+                "#f3a",
+                "silver",
+                "gray"
+            ],
+            "labels":
+            [
+                "9/8",
+                "F#5^7",
+                "fif",
+                "3^1/2",
+                "n7_13n",
+                "D6"
+            ],
+            "latticeIntervals": null,
+            "name": "Test scale",
+            "baseMidiNote": 62,
+            "userBaseFrequency": 261.63,
+            "autoFrequency": true,
+            "autoColors": "silver",
+            "sourceText": "(* This is a test scale *)\nD5 = 333Hz\n9/8 white\nF#5^7\n700. \"fif\"\nsqrt(3) #f3a\nn7_13n\nD6",
+            "error": "",
+            "warning": "",
+            "isomorphicVertical": 5,
+            "isomorphicHorizontal": 1,
+            "keyboardMode": "isomorphic",
+            "equaveShift": 0,
+            "degreeShift": 0,
+            "pianoMode": "Asdf",
+            "accidentalColor": "black",
+            "lowAccidentalColor": "maroon",
+            "middleAccidentalColor": "navy",
+            "highAccidentalColor": "indigo"
+        },
+        "audio":
+        {
+            "mainVolume": 0.18,
+            "waveform": "semisine",
+            "attackTime": 0.01,
+            "decayTime": 0.3,
+            "sustainLevel": 0.8,
+            "releaseTime": 0.01,
+            "stackSize": 3,
+            "spread": 2.5,
+            "aperiodicWaveform": "jegogan",
+            "audioDelay": 0.001,
+            "synthType": "oscillator",
+            "pingPongDelayTime": 0.3,
+            "pingPongFeedback": 0.8,
+            "pingPongGain": 0,
+            "pingPongSeparation": 1
+        },
+        "state":
+        {
+            "latticeType": "auto"
+        },
+        "ji-lattice":
+        {
+            "horizontalCoordinates":
+            [
+                0,
+                40,
+                0,
+                13,
+                -14,
+                -8,
+                -5,
+                7,
+                20
+            ],
+            "verticalCoordinates":
+            [
+                0,
+                0,
+                -40,
+                -11,
+                -18,
+                -4,
+                -32,
+                -25,
+                -6
+            ],
+            "xCoords":
+            [
+                0,
+                40,
+                0,
+                0,
+                -14,
+                -8,
+                -5,
+                0,
+                20
+            ],
+            "yCoords":
+            [
+                0,
+                0,
+                -40,
+                0,
+                -18,
+                -4,
+                -32,
+                -25,
+                -3
+            ],
+            "zCoords":
+            [
+                0,
+                0,
+                0,
+                40,
+                13,
+                7,
+                5,
+                9,
+                15
+            ],
+            "maxDistance": 1,
+            "size": 2,
+            "labelOffset": 2,
+            "edgesString": "",
+            "showLabels": true,
+            "rotation": 0,
+            "drawArrows": false,
+            "grayExtras": false,
+            "depth": 100
+        },
+        "grid":
+        {
+            "size": 0.15,
+            "viewCenterX": 0,
+            "viewCenterY": -0.1,
+            "viewScale": 2.5,
+            "labelOffset": 2,
+            "showLabels": true,
+            "valString": "12p",
+            "edgesString": "",
+            "delta1": 7,
+            "delta1X": 1,
+            "delta1Y": 0,
+            "delta2": 4,
+            "delta2X": 0,
+            "delta2Y": -1,
+            "minX": -3.1,
+            "maxX": 3.1,
+            "minY": -2.1,
+            "maxY": 2.1,
+            "gridlines1": true,
+            "gridlines2": true,
+            "diagonals1": false,
+            "diagonals2": false
+        },
+        "edo-cycles":
+        {
+            "size": 0.15,
+            "labelOffset": 2,
+            "showLabels": true,
+            "valString": "12p",
+            "generator": 7
+        }
+    },
+    "envelope":
+    {
+        "version": "3.0.0-rc2",
+        "sonicWeaveVersion": "0.10.5",
+        "msSince1970": 1721287672397,
+        "navigator": null,
+        "userUUID": null
+    }
+}
