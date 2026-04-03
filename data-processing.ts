@@ -28,9 +28,9 @@ function validateString(str: string, maxLength = 255) {
  * @returns The same number when validation succeeds.
  * @throws {Error} If the value is not a number.
  */
-function validateNumber(n: number) {
+function validateNumber(n: number, fieldName: string) {
   if (typeof n !== 'number') {
-    throw new Error('Not a number (or even NaN)');
+    throw new Error(`${fieldName} is not a number`);
   }
   return n;
 }
@@ -64,7 +64,7 @@ export function validatePayload(data: any) {
     throw new Error('Invalid scale data');
   }
   for (const ratio of scale.intervalRatios) {
-    validateNumber(ratio);
+    validateNumber(ratio, 'scale.intervalRatios[i]');
   }
   for (const color of scaleStore.colors) {
     validateString(color);
@@ -72,8 +72,8 @@ export function validatePayload(data: any) {
   for (const label of scaleStore.labels) {
     validateString(label);
   }
-  validateNumber(scale.baseFrequency);
-  validateNumber(scale.baseMidiNote);
+  validateNumber(scale.baseFrequency, 'scale.baseFrequency');
+  validateNumber(scale.baseMidiNote, 'scale.baseMidiNote');
   validateString(scale.title, 4095);
   Interval.reviver('relativeIntervals', data.scale.relativeIntervals);
   validateString(scaleStore.name, 4095);
@@ -87,12 +87,18 @@ export function validatePayload(data: any) {
   validateString(scaleStore.lowAccidentalColor);
   validateString(scaleStore.middleAccidentalColor);
   validateString(scaleStore.highAccidentalColor);
-  validateNumber(scaleStore.userBaseFrequency);
+  validateNumber(scaleStore.userBaseFrequency, 'scaleStore.userBaseFrequency');
   validateBoolean(scaleStore.autoFrequency);
-  validateNumber(scaleStore.isomorphicVertical);
-  validateNumber(scaleStore.isomorphicHorizontal);
-  validateNumber(scaleStore.equaveShift);
-  validateNumber(scaleStore.degreeShift);
+  validateNumber(
+    scaleStore.isomorphicVertical,
+    'scaleStore.isomorphicVertical',
+  );
+  validateNumber(
+    scaleStore.isomorphicHorizontal,
+    'scaleStore.isomorphicHorizontal',
+  );
+  validateNumber(scaleStore.equaveShift, 'scaleStore.equaveShift');
+  validateNumber(scaleStore.degreeShift, 'scaleStore.degreeShift');
   if (scaleStore.latticeIntervals !== null) {
     Interval.reviver('latticeIntervals', scaleStore.latticeIntervals);
   }
@@ -119,14 +125,17 @@ export function validatePayload(data: any) {
   validateString(audio.waveform);
   validateString(audio.aperiodicWaveform);
   validateString(audio.synthType);
-  validateNumber(audio.attackTime);
-  validateNumber(audio.decayTime);
-  validateNumber(audio.releaseTime);
-  validateNumber(audio.stackSize);
-  validateNumber(audio.spread);
-  validateNumber(audio.audioDelay);
-  validateNumber(audio.pingPongDelayTime);
-  validateNumber(audio.pingPongSeparation);
+  validateNumber(audio.attackTime, 'audio.attackTime');
+  validateNumber(audio.decayTime, 'audio.decayTime');
+  validateNumber(audio.releaseTime, 'audio.releaseTime');
+  validateNumber(audio.stackSize, 'audio.stackSize');
+  validateNumber(audio.spread, 'audio.spread');
+  if ('audioDelay' in audio) {
+    // Legacy/test support
+    validateNumber(audio.audioDelay, 'audio.audioDelay');
+  }
+  validateNumber(audio.pingPongDelayTime, 'audio.pingPongDelayTime');
+  validateNumber(audio.pingPongSeparation, 'audio.pingPongSeparation');
   return true;
 }
 
@@ -145,18 +154,21 @@ export function cleanAndValidateEnvelope(data: any) {
   };
   envelope.clientVersion = validateString(data.version);
   envelope.clientSonicWeaveVersion = validateString(data.sonicWeaveVersion);
-  envelope.clientMsSince1970 = validateNumber(data.msSince1970);
+  envelope.clientMsSince1970 = validateNumber(
+    data.msSince1970,
+    'data.msSince1970',
+  );
   if (data.navigator) {
     envelope.navigator = {};
     envelope.navigator.userAgent = validateString(
       data.navigator.userAgent,
       1023,
     );
-    envelope.language = validateString(data.navigator.language);
+    envelope.navigator.language = validateString(data.navigator.language);
     if (!Array.isArray(data.navigator.languages)) {
       throw new Error('Not an array');
     }
-    envelope.languages = data.navigator.languages.map((l: string) =>
+    envelope.navigator.languages = data.navigator.languages.map((l: string) =>
       validateString(l),
     );
   }

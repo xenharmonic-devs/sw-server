@@ -35,3 +35,13 @@ bun start
 ```
 
 This project was created using `bun init` in bun v1.1.8. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+
+## Migrations
+
+Run one-off data migrations with Bun after exporting the required paths.
+
+Example:
+
+```bash
+bun run migrations/004-envelope-navigator-language.ts
+```

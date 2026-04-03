@@ -1,7 +1,7 @@
 import {stat} from 'node:fs';
 import {join, parse} from 'node:path';
 import {cleanAndValidateEnvelope, validatePayload} from './data-processing';
-import {validateId, getNetworkUrls} from './utils';
+import {validateId, getNetworkUrls, acceptsGzipEncoding} from './utils';
 
 const INDEX_BODY = `
 <!DOCTYPE html>
@@ -137,13 +137,23 @@ const server = Bun.serve({
       }
       await checkStatistics();
       statistics['scale POST']++;
-      const data = await req.json();
+      let data: any;
+      try {
+        data = await req.json();
+      } catch {
+        return response('Bad JSON payload', {status: 400});
+      }
       if (!validateId(data.id)) {
         return response('Bad identifier', {status: 400});
       }
       // Convert dashes to something more bash friendly.
       const id = (data.id as string).replaceAll('-', 'å');
-      const envelope = cleanAndValidateEnvelope(data.envelope);
+      let envelope: any;
+      try {
+        envelope = cleanAndValidateEnvelope(data.envelope);
+      } catch {
+        return response('Bad scale envelope', {status: 400});
+      }
       envelope.requestIP = requestIP;
       envelope.xRealIP = xRealIP;
       envelope.xForwardedFor = xForwardedFor;
@@ -154,14 +164,21 @@ const server = Bun.serve({
       if (await envelopeFile.exists()) {
         return response('Scale already exists', {status: 409});
       }
+      // Write envelope before scale payload. Dangling envelopes indicate problems to debug.
       await Bun.write(envelopeFile, JSON.stringify(envelope));
 
-      validatePayload(data.payload);
+      try {
+        validatePayload(data.payload);
+      } catch {
+        return response('Bad scale payload', {status: 400});
+      }
+
       const filename = join(SCALE_PATH, id + '.json.gz');
       const file = Bun.file(filename);
       if (await file.exists()) {
         return response('Scale already exists', {status: 409});
       }
+
       const buffer = Buffer.from(JSON.stringify(data.payload));
       await Bun.write(file, Bun.gzipSync(buffer));
 
@@ -192,11 +209,9 @@ const server = Bun.serve({
       const count = statistics['scale GET by id'][id] ?? 0;
       statistics['scale GET by id'][id] = count + 1;
 
-      const accept = req.headers.get('Accept-Encoding');
       if (
         url.searchParams.get('gzip') === '0' ||
-        !accept ||
-        !accept.split(',').includes('gzip')
+        !acceptsGzipEncoding(req.headers.get('Accept-Encoding'))
       ) {
         const buffer = await file.arrayBuffer();
         return response(Bun.gunzipSync(buffer));
