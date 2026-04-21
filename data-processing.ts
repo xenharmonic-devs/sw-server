@@ -36,6 +36,26 @@ function validateNumber(n: number, fieldName: string) {
 }
 
 /**
+ * Validates an input as a non-empty array of numbers.
+ *
+ * @param ns - Value to validate.
+ * @returns The same number array when validation succeeds.
+ * @throws {Error} If the value is not an array of numbers.
+ */
+function validateNumberArray(ns: number[], fieldName: string) {
+  if (!Array.isArray(ns)) {
+    throw new Error(`${fieldName} must be an array`);
+  }
+  if (!ns.length) {
+    throw new Error(`${fieldName} cannot be empty`);
+  }
+  for (let i = 0; i < ns.length; ++i) {
+    validateNumber(ns[i], `${fieldName}[${i}]`);
+  }
+  return ns;
+}
+
+/**
  * Validates an input as a boolean.
  *
  * @param b - Value to validate.
@@ -89,11 +109,11 @@ export function validatePayload(data: any) {
   validateString(scaleStore.highAccidentalColor);
   validateNumber(scaleStore.userBaseFrequency, 'scaleStore.userBaseFrequency');
   validateBoolean(scaleStore.autoFrequency);
-  validateNumber(
+  validateNumberArray(
     scaleStore.isomorphicVertical,
     'scaleStore.isomorphicVertical',
   );
-  validateNumber(
+  validateNumberArray(
     scaleStore.isomorphicHorizontal,
     'scaleStore.isomorphicHorizontal',
   );
